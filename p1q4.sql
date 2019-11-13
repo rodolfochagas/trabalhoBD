@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION GerarCreateTable(tablename varchar)
+CREATE OR REPLACE FUNCTION gerarCreateTable(tablename varchar)
     RETURNS SETOF text AS $$ 
     BEGIN
 			RETURN QUERY
@@ -37,30 +37,30 @@ CREATE OR REPLACE FUNCTION GerarCreateTable(tablename varchar)
 CREATE OR REPLACE FUNCTION gerarScript()
    RETURNS SETOF text AS $$
 DECLARE 
-    titles TEXT DEFAULT '';
-    rec_film   RECORD;
-    cur_films CURSOR
+    script TEXT DEFAULT '';
+    rec_tabela RECORD;
+    cur_tabelas CURSOR
        FOR SELECT tablename
         FROM pg_catalog.pg_tables
         WHERE schemaname != 'pg_catalog'
         AND schemaname != 'information_schema';
 BEGIN
    -- Open the cursor
-   OPEN cur_films;
+   OPEN cur_tabelas;
    
    LOOP
     -- fetch row into the film
-      FETCH cur_films INTO rec_film;
+      FETCH cur_tabelas INTO rec_tabela;
     -- exit when no more row to fetch
       EXIT WHEN NOT FOUND;
     -- build the output
-    titles := titles || ' ' || gerarcreatetable(rec_film.tablename::varchar);
+    script := script || ' ' || gerarcreatetable(rec_tabela.tablename::varchar);
    END LOOP;
 
    -- Close the cursor
-   CLOSE cur_films;
+   CLOSE cur_tabelas;
  
-   RETURN NEXT titles;
+   RETURN NEXT script;
 END; $$
  
 LANGUAGE plpgsql;
